@@ -27,6 +27,7 @@ except ec2.exceptions.InvalidKeyPair as e:
 # except Exception as e:
 #     # code to handle the exception
 #     print(type(e))  # print the type of the exception
+exit()
 # Create a security group if it doesn't exist
 try:
     security_group = ec2.create_security_group(
