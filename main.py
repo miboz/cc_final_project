@@ -39,3 +39,16 @@ except ec2.exceptions.InvalidGroup.DuplicateGroup:
     # Security group already exists, get its ID
     response = ec2.describe_security_groups(GroupNames=['my-security-group'])
     security_group_id = response['SecurityGroups'][0]['GroupId']
+
+# Add an inbound rule to the security group to allow all traffic from any IP address
+ec2.authorize_security_group_ingress(
+    GroupId=security_group_id,
+    IpPermissions=[
+        {
+            'IpProtocol': '-1',
+            'FromPort': -1,
+            'ToPort': -1,
+            'IpRanges': [{'CidrIp': '0.0.0.0/0'}]
+        }
+    ]
+)
