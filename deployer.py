@@ -69,7 +69,7 @@ class Deployer:
     def create_stand_alone_instance(self):
         # Define the parameters for the EC2 instance
         instance_params = {
-            'ImageId': 'ami-0b5eea76982371e91',  # Amazon Linux 2 AMI
+            'ImageId': 'ami-0574da719dca65348',  # Ubuntu AMI
             'InstanceType': 't2.micro',
             'MinCount': 1,
             'MaxCount': 1,

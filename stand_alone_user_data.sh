@@ -1,4 +1,5 @@
 #!/bin/bash
-yum update -y
-yum install -y mysql
-systemctl start mysqld
+#apt update -y;
+#apt upgrade -y;
+#apt install -y mysql-server;
+#systemctl start mysql-server;
