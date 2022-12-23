@@ -5,14 +5,6 @@ ec2 = boto3.client('ec2')
 ssm = boto3.client('ssm')
 
 
-# Create a key pair if it doesn't exist
-# try:
-#     key_pair = ec2.create_key_pair(KeyName='key1')
-#     key_pair_name = key_pair['KeyName']
-# except ec2.exceptions.InvalidKeyPair.Duplicate:
-#     # Key pair already exists, get its name
-#     key_pair_name = 'key1'
-
 try:
     key_pair = ec2.create_key_pair(KeyName='key1')
     key_pair_name = key_pair['KeyName']
@@ -53,6 +45,7 @@ ec2.authorize_security_group_ingress(
     ]
 )
 
+exit()
 # Define the parameters for the EC2 instance
 instance_params = {
     'ImageId': 'ami-0b5eea76982371e91',  # Amazon Linux 2 AMI
