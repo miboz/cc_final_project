@@ -74,3 +74,25 @@ instance_id = response['Instances'][0]['InstanceId']
 
 # Wait for the instance to be in the 'running' state
 ec2.get_waiter('instance_running').wait(InstanceIds=[instance_id])
+
+# Get the public IP address of the instance
+instance_info = ec2.describe_instances(InstanceIds=[instance_id])
+public_ip = instance_info['Reservations'][0]['Instances'][0]['PublicIpAddress']
+
+# Connect to the instance using SSM
+ssm_response = ssm.send_command(
+    InstanceIds=[instance_id],
+    DocumentName='AWS-RunShellScript',
+    Parameters={'commands': ['mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO root@\'%\' IDENTIFIED BY \'password\'; FLUSH PRIVILEGES;"']},
+)
+
+# Check the status of the command execution
+command_id = ssm_response['Command']['CommandId']
+command_status = ssm.get_command_invocation(CommandId=command_id, InstanceId=instance_id)
+while command_status['Status'] not in ['Success', 'Failed']:
+    command_status = ssm.get_command_invocation(CommandId=command_id, InstanceId=instance_id)
+
+if command_status['Status'] == 'Success':
+    print('Successfully granted privileges to root user from any IP address')
+else:
+    print('Failed to grant privileges to root user')
