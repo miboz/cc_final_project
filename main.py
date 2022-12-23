@@ -55,7 +55,7 @@ ec2.authorize_security_group_ingress(
 
 # Define the parameters for the EC2 instance
 instance_params = {
-    'ImageId': 'ami-0ac019f4fcb7cb7e6',  # Amazon Linux 2 AMI
+    'ImageId': 'ami-0b5eea76982371e91',  # Amazon Linux 2 AMI
     'InstanceType': 't2.micro',
     'MinCount': 1,
     'MaxCount': 1,
