@@ -75,11 +75,6 @@ class Deployer:
             'MaxCount': 1,
             'KeyName': self.key_pair_name,
             'SecurityGroupIds': [self.security_group_id],
-            'UserData': """#!/bin/bash
-                yum update -y
-                yum install -y mysql
-                systemctl start mysqld
-                """,
         }
 
         # Create the EC2 instance
