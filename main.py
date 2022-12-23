@@ -52,3 +52,25 @@ ec2.authorize_security_group_ingress(
         }
     ]
 )
+
+# Define the parameters for the EC2 instance
+instance_params = {
+    'ImageId': 'ami-0ac019f4fcb7cb7e6',  # Amazon Linux 2 AMI
+    'InstanceType': 't2.micro',
+    'MinCount': 1,
+    'MaxCount': 1,
+    'KeyName': key_pair_name,
+    'SecurityGroupIds': [security_group_id],
+    'UserData': """#!/bin/bash
+        yum update -y
+        yum install -y mysql
+        systemctl start mysqld
+        """,
+}
+
+# Create the EC2 instance
+response = ec2.run_instances(**instance_params)
+instance_id = response['Instances'][0]['InstanceId']
+
+# Wait for the instance to be in the 'running' state
+ec2.get_waiter('instance_running').wait(InstanceIds=[instance_id])
