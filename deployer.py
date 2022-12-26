@@ -75,31 +75,9 @@ class Deployer:
             response = self.ec2.describe_security_groups(GroupNames=['sql-security-group'])
             self.security_group_id = response['SecurityGroups'][0]['GroupId']
 
-        # Check if the inbound rule already exists
-        response = self.ec2.describe_security_groups(GroupIds=[self.security_group_id])
-        inbound_rules = response['SecurityGroups'][0]['IpPermissions']
-        rule_exists = False
-        for rule in inbound_rules:
-            if rule['IpProtocol'] == '-1':
-                for range in rule['IpRanges']:
-                    if range['CidrIp'] == '0.0.0.0/0':
-                        rule_exists = True
-                        break
-
-        # Add an inbound rule to the security group to allow all traffic
-        #  from any IP address if the rule doesn't already exist
-        if not rule_exists:
-            self.ec2.authorize_security_group_ingress(
-                GroupId=self.security_group_id,
-                IpPermissions=[
-                    {
-                        'IpProtocol': '-1',
-                        'FromPort': -1,
-                        'ToPort': -1,
-                        'IpRanges': [{'CidrIp': '0.0.0.0/0'}]
-                    }
-                ]
-            )
+        # Check if the inbound rule already exists for
+        self.create_inbound_rule(self.standalone_security_group_id)
+        self.create_inbound_rule(self.security_group_id)
 
         # Check if subnet exists
         response = self.ec2.describe_subnets(
@@ -115,6 +93,32 @@ class Deployer:
             # Create a subnet if it doesn't exist
             subnet = self.ec2.create_subnet(VpcId=vpc_id, CidrBlock='10.0.1.0/24')
             self.subnet_id = subnet['Subnet']['SubnetId']
+
+    def create_inbound_rule(self, security_group_id):
+        response = self.ec2.describe_security_groups(GroupIds=[security_group_id])
+        inbound_rules = response['SecurityGroups'][0]['IpPermissions']
+        rule_exists = False
+        for rule in inbound_rules:
+            if rule['IpProtocol'] == '-1':
+                for range in rule['IpRanges']:
+                    if range['CidrIp'] == '0.0.0.0/0':
+                        rule_exists = True
+                        break
+
+        # Add an inbound rule to the security group to allow all traffic
+        #  from any IP address if the rule doesn't already exist
+        if not rule_exists:
+            self.ec2.authorize_security_group_ingress(
+                GroupId=security_group_id,
+                IpPermissions=[
+                    {
+                        'IpProtocol': '-1',
+                        'FromPort': -1,
+                        'ToPort': -1,
+                        'IpRanges': [{'CidrIp': '0.0.0.0/0'}]
+                    }
+                ]
+            )
 
     def create_standalone_instance(self):
 
