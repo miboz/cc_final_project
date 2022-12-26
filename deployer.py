@@ -57,7 +57,7 @@ class Deployer:
                 raise
             # Security group already exists, get its ID
             response = self.ec2.describe_security_groups(GroupNames=['sa-security-group'])
-            self.security_group_id = response['SecurityGroups'][0]['GroupId']
+            self.standalone_security_group_id = response['SecurityGroups'][0]['GroupId']
 
         # Create sql group if it doesn't exist
         try:
